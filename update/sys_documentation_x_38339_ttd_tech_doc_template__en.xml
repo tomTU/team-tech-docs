@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="" label="Tech Doc Template" language="en" table="x_38339_ttd_tech_doc_template">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element/>
+            <help/>
+            <hint/>
+            <label>Tech Doc Template</label>
+            <language>en</language>
+            <name>x_38339_ttd_tech_doc_template</name>
+            <plural>Tech Doc Templates</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin_tc</sys_created_by>
+            <sys_created_on>2018-12-11 17:51:22</sys_created_on>
+            <sys_id>e2512bb54fd26300dc5a417da310c76f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Tech Doc Template</sys_name>
+            <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+            <sys_update_name>sys_documentation_x_38339_ttd_tech_doc_template__en</sys_update_name>
+            <sys_updated_by>admin_tc</sys_updated_by>
+            <sys_updated_on>2018-12-11 17:51:22</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

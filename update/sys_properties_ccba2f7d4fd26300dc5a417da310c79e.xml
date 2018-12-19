@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>The field names associated to the headers</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_38339_ttd.update_sets_found.column_heading_fields</name>
+        <read_roles/>
+        <suffix>update_sets_found.column_heading_fields</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-11 18:32:09</sys_created_on>
+        <sys_id>ccba2f7d4fd26300dc5a417da310c79e</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>x_38339_ttd.update_sets_found.column_heading_fields</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sys_properties_ccba2f7d4fd26300dc5a417da310c79e</sys_update_name>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-13 12:41:58</sys_updated_on>
+        <type>string</type>
+        <value>name,application,state,sys_created_by,sys_created_on</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=ccba2f7d4fd26300dc5a417da310c79e"/>
+</record_update>

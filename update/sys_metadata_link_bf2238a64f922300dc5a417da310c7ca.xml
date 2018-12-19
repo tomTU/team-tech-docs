@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>update</directory>
+        <documentkey>33c4a42e4f522300dc5a417da310c754</documentkey>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="u_tabbed_widget">
+    <u_tabbed_widget action="INSERT_OR_UPDATE">
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-13 12:03:03</sys_created_on>
+        <sys_id>33c4a42e4f522300dc5a417da310c754</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-13 12:03:03</sys_updated_on>
+        <u_active>true</u_active>
+        <u_calculated_id>33c4a42e4f522300dc5a417da310c754</u_calculated_id>
+        <u_instance_options/>
+        <u_tab_order>200</u_tab_order>
+        <u_tab_title>Customer Updates Found</u_tab_title>
+        <u_widget display_value="TTD Customer Updates Found">7b5ed4e64f522300dc5a417da310c79f</u_widget>
+        <u_widget_instance display_value="TTD - Tabbed">eb04242e4f522300dc5a417da310c742</u_widget_instance>
+    </u_tabbed_widget>
+</record_update>
+]]></payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-13 13:01:29</sys_created_on>
+        <sys_id>bf2238a64f922300dc5a417da310c7ca</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>TTD Customer Updates Found</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sys_metadata_link_bf2238a64f922300dc5a417da310c7ca</sys_update_name>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-13 13:01:29</sys_updated_on>
+        <tablename>u_tabbed_widget</tablename>
+    </sys_metadata_link>
+</record_update>

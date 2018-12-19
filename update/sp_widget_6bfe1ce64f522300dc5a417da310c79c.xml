@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function( $scope, ttdService ) {
+
+	var c = this;
+
+	$scope.ttdService = ttdService;
+
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>h2 {&#13;
+  font-weight: bold;&#13;
+}&#13;
+&#13;
+.table-responsive {&#13;
+  height:500px;&#13;
+}&#13;
+&#13;
+.no-results {&#13;
+ text-align: center;&#13;
+ font-weight: bold;&#13;
+}&#13;
+&#13;
+/*   C H E C K B O X  S W I T CH  */&#13;
+&#13;
+.checkbox.checbox-switch {&#13;
+  padding-left: 0;&#13;
+}&#13;
+&#13;
+.checkbox.checbox-switch label,&#13;
+.checkbox-inline.checbox-switch {&#13;
+  display: inline-block;&#13;
+  position: relative;&#13;
+  padding-left: 0;&#13;
+}&#13;
+.checkbox.checbox-switch label input,&#13;
+.checkbox-inline.checbox-switch input {&#13;
+  display: none;&#13;
+}&#13;
+.checkbox.checbox-switch label span,&#13;
+.checkbox-inline.checbox-switch span {&#13;
+  width: 35px;&#13;
+  border-radius: 20px;&#13;
+  height: 18px;&#13;
+  border: 1px solid #dbdbdb;&#13;
+  background-color: rgb(255, 255, 255);&#13;
+  border-color: rgb(223, 223, 223);&#13;
+  box-shadow: rgb(223, 223, 223) 0px 0px 0px 0px inset;&#13;
+  transition: border 0.4s ease 0s, box-shadow 0.4s ease 0s;&#13;
+  display: inline-block;&#13;
+  vertical-align: middle;&#13;
+  margin-right: 5px;&#13;
+}&#13;
+.checkbox.checbox-switch label span:before,&#13;
+.checkbox-inline.checbox-switch span:before {&#13;
+  display: inline-block;&#13;
+  width: 16px;&#13;
+  height: 16px;&#13;
+  border-radius: 50%;&#13;
+  background: rgb(255,255,255);&#13;
+  content: " ";&#13;
+  top: 0;&#13;
+  position: relative;&#13;
+  left: 0;&#13;
+  transition: all 0.3s ease;&#13;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);&#13;
+}&#13;
+.checkbox.checbox-switch label &gt; input:checked + span:before,&#13;
+.checkbox-inline.checbox-switch &gt; input:checked + span:before {&#13;
+  left: 17px;&#13;
+}&#13;
+&#13;
+&#13;
+/* Switch Default */&#13;
+.checkbox.checbox-switch label &gt; input:checked + span,&#13;
+.checkbox-inline.checbox-switch &gt; input:checked + span {&#13;
+  background-color: rgb(180, 182, 183);&#13;
+  border-color: rgb(180, 182, 183);&#13;
+  box-shadow: rgb(180, 182, 183) 0px 0px 0px 8px inset;&#13;
+  transition: border 0.4s ease 0s, box-shadow 0.4s ease 0s, background-color 1.2s ease 0s;&#13;
+}&#13;
+.checkbox.checbox-switch label &gt; input:checked:disabled + span,&#13;
+.checkbox-inline.checbox-switch &gt; input:checked:disabled + span {&#13;
+  background-color: rgb(220, 220, 220);&#13;
+  border-color: rgb(220, 220, 220);&#13;
+  box-shadow: rgb(220, 220, 220) 0px 0px 0px 8px inset;&#13;
+  transition: border 0.4s ease 0s, box-shadow 0.4s ease 0s, background-color 1.2s ease 0s;&#13;
+}&#13;
+.checkbox.checbox-switch label &gt; input:disabled + span,&#13;
+.checkbox-inline.checbox-switch &gt; input:disabled + span {&#13;
+  background-color: rgb(232,235,238);&#13;
+  border-color: rgb(255,255,255);&#13;
+}&#13;
+.checkbox.checbox-switch label &gt; input:disabled + span:before,&#13;
+.checkbox-inline.checbox-switch &gt; input:disabled + span:before {&#13;
+  background-color: rgb(248,249,250);&#13;
+  border-color: rgb(243, 243, 243);&#13;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);&#13;
+}&#13;
+&#13;
+/* Switch Success */&#13;
+.checkbox.checbox-switch.switch-success label &gt; input:checked + span,&#13;
+.checkbox-inline.checbox-switch.switch-success &gt; input:checked + span {&#13;
+  background-color: rgb(40, 167, 69);&#13;
+  border-color: rgb(40, 167, 69);&#13;
+  box-shadow: rgb(40, 167, 69) 0px 0px 0px 8px inset;&#13;
+  transition: border 0.4s ease 0s, box-shadow 0.4s ease 0s, background-color 1.2s ease 0s;&#13;
+}&#13;
+.checkbox.checbox-switch.switch-success label &gt; input:checked:disabled + span,&#13;
+.checkbox-inline.checbox-switch.switch-success &gt; input:checked:disabled + span {&#13;
+  background-color: rgb(153, 217, 168);&#13;
+  border-color: rgb(153, 217, 168);&#13;
+  box-shadow: rgb(153, 217, 168) 0px 0px 0px 8px inset;&#13;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>List of update sets found using the search term query</description>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>ttd-update-sets-found</id>
+        <internal>false</internal>
+        <link/>
+        <name>TTD Update Sets Found</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+	
+	//Properties
+	data.columnHeadings = gs.getProperty( 'x_38339_ttd.update_sets_found.column_headings' ).split(',');
+	data.columnFieldNames = gs.getProperty( 'x_38339_ttd.update_sets_found.column_heading_fields' ).split(',');
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-13 11:38:44</sys_created_on>
+        <sys_id>6bfe1ce64f522300dc5a417da310c79c</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>TTD Update Sets Found</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sp_widget_6bfe1ce64f522300dc5a417da310c79c</sys_update_name>
+        <sys_updated_by>admin_mh</sys_updated_by>
+        <sys_updated_on>2018-12-18 14:32:26</sys_updated_on>
+        <template><![CDATA[<div class="panel" ng-show="ttdService.data.hasSearched">
+  <div class="panel-heading no-results" ng-show="ttdService.data.updateSets.length == 0">
+    ${There were no update sets found that matched your search}
+  </div>
+  <div class="panel-body table-responsive" ng-show="ttdService.data.updateSets.length > 0">
+    <table class="table table-hover tabel-condensed">
+      <thead>
+        <tr>
+          <th></th>
+          <th ng-repeat="heading in c.data.columnHeadings" ng-bind-html="heading"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="set in ttdService.data.updateSets track by set.sys_id">
+          <td>
+            <div class="checkbox checbox-switch switch-success">
+              <label>
+                <input type="checkbox" id={{set.sys_id}} autocomplete="off"
+                       ng-model="ttdService.data.updateSetsChecked[set.sys_id]"
+                       ng-change="ttdService.calcUniquetypes()"/>
+                <span></span>
+              </label>
+            </div>
+          </td>
+          <td>{{set.name}}</td>
+          <td>{{set.application}}</td>
+          <td>{{set.state}}</td>
+          <td>{{set.sys_created_by}}</td>
+          <td>{{set.sys_created_on}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>]]></template>
+    </sp_widget>
+</record_update>

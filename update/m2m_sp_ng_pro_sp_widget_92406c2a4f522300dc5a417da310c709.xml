@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_ng_pro_sp_widget">
+    <m2m_sp_ng_pro_sp_widget action="INSERT_OR_UPDATE">
+        <sp_angular_provider display_value="ttdService">f7dc90a64f522300dc5a417da310c701</sp_angular_provider>
+        <sp_widget display_value="TTD Search">51ff502a4f522300dc5a417da310c78a</sp_widget>
+        <sys_class_name>m2m_sp_ng_pro_sp_widget</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-13 11:43:17</sys_created_on>
+        <sys_id>92406c2a4f522300dc5a417da310c709</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>teamTechDocsNEW.TTD Search</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>m2m_sp_ng_pro_sp_widget_92406c2a4f522300dc5a417da310c709</sys_update_name>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-13 11:43:17</sys_updated_on>
+    </m2m_sp_ng_pro_sp_widget>
+</record_update>

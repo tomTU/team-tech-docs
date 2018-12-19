@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_angular_provider">
+    <sp_angular_provider action="INSERT_OR_UPDATE">
+        <name>fancyNumberCounter</name>
+        <script><![CDATA[function() {
+	return {
+		restrict: 'E',
+		scope: {
+			number: '<'
+		},
+		template: '<span>{{count}}</span>',
+		controller: function( $scope, $interval ) {
+
+			$scope.$watch('number', function(newVal, oldVal) {
+				newCounter( newVal );
+			});
+
+			function newCounter( totalNumber ) {
+				$scope.count = 0;
+				var addOn;
+
+				var total = parseFloat( totalNumber );
+
+				switch( true ) {
+					case total < 10:
+						addOn = 1;
+						break;
+					case total < 100:
+						addOn = 2;
+						break;
+					case total < 500:
+						addOn = 3;
+						break;
+					case total < 1000:
+						addOn = 10;
+						break;
+					case total < 5000:
+						addOn = 20;
+						break;
+					default:
+						addOn = 50;
+				}
+				var intervalTime = 500/(total/addOn);
+
+				var myCountingInterval = $interval(countToTotal, intervalTime);
+
+				function countToTotal() {
+					if ( $scope.count >= total ) {
+						$interval.cancel(myCountingInterval);
+						return;
+					}
+					$scope.count = $scope.count + addOn > total ? total : $scope.count + addOn;
+				}
+			}
+
+		}
+	};
+}]]></script>
+        <sys_class_name>sp_angular_provider</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-13 11:28:50</sys_created_on>
+        <sys_id>3efcd8664f522300dc5a417da310c7c0</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>fancyNumberCounter</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sp_angular_provider_3efcd8664f522300dc5a417da310c7c0</sys_update_name>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-13 13:22:36</sys_updated_on>
+        <type>directive</type>
+    </sp_angular_provider>
+</record_update>

@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_38339_ttd.TuTeamTechDocs2</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>TeamTechDoc - Processor script used to generate a document</description>
+        <name>TuTeamTechDocs2</name>
+        <script><![CDATA[var TuTeamTechDocs2 = Class.create();
+TuTeamTechDocs2.prototype = {
+	initialize: function() {
+
+		//Debugging
+		this.SOURCE = 'TeamTechDocs';
+
+		//Constants
+		this.NO_CONTENT_TEXT = gs.getMessage( '<b>No elements of this type are in this release</b>' );
+		this.TTD_TEMPLATE_RECORD = {};
+		this.TTD_TEMPLATE_REC_SYS_ID = '56f427794fd26300dc5a417da310c7af';
+
+		//Tables
+		this.TTD_GEN_RECORD_TABLE = 'x_38339_ttd_generated_tech_doc';
+		this.TTD_TECH_DOC_TEMPL_TABLE = 'x_38339_ttd_tech_doc_template';
+		this.TTD_COL_HEADERS_TABLE = 'x_38339_ttd_tech_doc_column';
+
+		//Dynamic content
+		this.super_obj = {};
+		this.generated_tech_doc_record = '';
+		this.start_time = new GlideDateTime();
+		this.end_time = '';
+
+	},
+
+	/*_________________________________________________________________
+   * Description: Starting method used to gather up the information we need to generate the required HTML to generate a TTD Generated Record
+   * Parameters: superMassiveObject - [ object ] - An object containing all of our update record data
+   * Returns: grGeneratedRec - [ string ] - The sys_id of the generated tech document record
+   ________________________________________________________________*/
+	ttdController: function( superMassiveObject ) {
+
+		if ( !superMassiveObject ) {
+
+			gs.error( gs.getMessage( 'You cannot call this script without passing in a superMassiveObject' ) );
+			return gs.getMessage( 'You cannot call this script without passing in a superMassiveObject' );
+
+		}
+
+		this.super_obj = superMassiveObject;
+		//gs.info( "ttdController - super object set: \n" + JSON.stringify( this.super_obj ) );
+
+		//Get the TTD Template Record
+		this.getTemplateRecord();
+		//gs.info( "ttdController - template record retrieved: \n" + this.TTD_TEMPLATE_RECORD.sys_id );
+
+		//Iterate over the template records HTML field where substitution is located
+		this.parseSubstitutions();
+		//gs.info( "ttdController - substitutions parsed" );
+
+		//Return the generated record sys_id
+		return this.generated_tech_doc_record;
+
+	},
+
+	/*_________________________________________________________________
+   * Description: Gets the template record
+   * Returns: Void
+   ________________________________________________________________*/
+	getTemplateRecord: function() {
+
+		var grTemplateRec = new GlideRecord( this.TTD_TECH_DOC_TEMPL_TABLE );
+		if ( grTemplateRec.get( this.TTD_TEMPLATE_REC_SYS_ID ) ) {
+			this.TTD_TEMPLATE_RECORD = grTemplateRec;
+		}
+
+		//gs.info( "getTemplateRecord - template record should now be set" );
+
+	},
+
+	/*_________________________________________________________________
+   * Description: Goes through a HTML field and locates the substitution text. The purpose being we want to go through the document and find elements it contains and swap out the substituted text for a HTML table with the content from the object we passed in - or the holding text if no content was found / selected
+   * Returns: Void
+   ________________________________________________________________*/
+	parseSubstitutions: function() {
+
+		//gs.info( "Parsing substitutions" );
+
+		//Grab our template's HTML content
+		var htmlContent = this.TTD_TEMPLATE_RECORD.document.toString();
+		//How many substitutions need to take place?
+		var loopCount = htmlContent.match(/\$/gi).length / 2;
+
+		//Locate each substitution text and set holding text or generate a table
+		for ( var i = 0; i < loopCount; i++ ) {
+
+			//Character substitution identification
+			var identifierStartPos = htmlContent.indexOf( '$#$' );
+			var identifierEndPos = htmlContent.indexOf( '$#$', identifierStartPos + 3);
+			//Get the record type text starting position - i.e 3 characters after the starting identifier
+			var recordTypeStartPos = identifierStartPos + 3;
+			//Get the record type text ending position - i.e the first substitution character after the starting point of the record type text
+			var recordTypeEndPos = htmlContent.indexOf( '$#$', recordTypeStartPos );
+			//Extract the record type text
+			var recordTypeText = htmlContent.substring( recordTypeStartPos, recordTypeEndPos );
+			//Store the full substitution string
+			var substitutedString = '$#$' + recordTypeText + '$#$';
+
+			//Now we have the location of the substitution text and the record type string - let's see if we hold content in our object for this record type
+			if ( this.haveRecordTypeContent( recordTypeText ) ) {
+
+				//gs.info( "parseSubstitutions Record type: " + recordTypeText + " is set to TRUE in Unique Types - trying to create a table" );
+
+				//We do - generate a table
+				var typeTable = this.generateTable( recordTypeText );
+
+				//gs.info( "parseSubstitutions Record type: " + recordTypeText + " table has been generated: \n" + typeTable );
+
+				//Then swap out the substituted text with our table
+				htmlContent = htmlContent.replace( substitutedString, typeTable );
+
+				//gs.info( "parseSubstitutions Record type: " + recordTypeText + " htmlContent has been updated with the new table: \n" + htmlContent );
+
+			} else if ( recordTypeText == 'Update Set' || recordTypeText == 'Excluded' ) {
+
+				//gs.info( "parseSubstitutions Record type: " + recordTypeText + " is update sets. Generating update set specific table" );
+
+				var updateSetTable = this.generateTable( recordTypeText );
+
+				//Then swap out the substituted text with our table
+				htmlContent = htmlContent.replace( substitutedString, updateSetTable );
+
+				//gs.info( "parseSubstitutions Record type: " + recordTypeText + " is update sets. htmlContent has been updated with the new table: \n" + htmlContent );
+			}
+			else {
+
+				//We don't - replace the substitution text with our placeholder text
+				htmlContent = htmlContent.replace( substitutedString, this.NO_CONTENT_TEXT );
+				//gs.info( "parseSubstitutions Record type: " + recordTypeText + " is not selected as a unique type - so placeholder message will be added to the htmlContent: \n" + htmlContent );
+
+			}
+		}
+
+		//gs.info( "parseSubstitutions has finished looping through all substutions - htmlContent should look sexy: \n" + htmlContent );
+
+		//We've now looped through all of our substitution text - let's generate a record to store the HTML in
+		this.generateTechDocRecord ( htmlContent );
+
+	},
+
+	/*_________________________________________________________________
+   * Description: Interrogates our super object to determine if we are to show content for this record type or not
+   * Parameters: recordTypeText - [ string ] - The Customer Update record type
+   * Returns: super_obj.uniqueTypes[ recordTypeText ] - [ boolean ] - TRUE / FALSE - Whether we are to display specific record type content in our document
+   ________________________________________________________________*/
+	haveRecordTypeContent: function( recordTypeText ) {
+
+		//if it's update sets return true
+		if ( recordTypeText == 'Update Set' ) {
+
+			return true;
+		}
+
+		if ( this.super_obj.uniqueTypes.hasOwnProperty( recordTypeText ) ) {
+
+			//gs.info( "haveRecordTypeContent establishing if we should be creating a table for our record type: " + recordTypeText + " answer is: " + this.super_obj.uniqueTypes[ recordTypeText ] );
+
+			return this.super_obj.uniqueTypes[ recordTypeText ];
+
+		} else {
+
+			//gs.info( "haveRecordTypeContent establishing if we should be creating a table for our record type: " + recordTypeText + " answer is: false" );
+
+			return false;
+
+		}
+
+	},
+
+	/*_________________________________________________________________
+   * Description: Generates a HTML table for a specific record type
+   * Parameters: recordTypeText - [ string ] - The Customer Update record type
+   * Returns: Void
+   ________________________________________________________________*/
+	generateTable: function( recordTypeText ) {
+
+		//First off we need to know what our column headings are
+		var columnHeadingsRaw = this.getColumnHeadings( recordTypeText );
+
+		//gs.info( "ColumnHeadings is type: " + typeof columnHeadingsRaw );
+		if ( typeof columnHeadingsRaw != 'object' ) {
+
+			return columnHeadingsRaw;
+		}
+
+		var columnHeadings = columnHeadingsRaw.columns;
+
+		//Number of columns
+		//var columnCount = Object.keys( columnHeadings ).length;
+
+		//Generate the table
+		var ourTable = 
+			"<div id='generated-table'>" +
+			"<table width='100%' style='border:1px solid black;border-collapse:collapse;table-layout:fixed;'>" +
+			"<tr>";
+
+		//Generate the table headers
+		for ( var x in columnHeadings ) {
+
+			ourTable += "<th style='text-align:left; padding:3px; border:1px solid black;border-collapse:collapse;color:#fff;background-color:#009DDC;'>" + x + "</th>";
+
+		}
+
+		//Close off the table headers row
+		ourTable += "</tr>";
+
+		//Get the updates specific to this record type
+		var typeUpdates = this.getUpdatesByType( recordTypeText );
+
+		//Now generate a row for every record we have that matches this type
+		for ( var t = 0; t < typeUpdates.length; t ++ ) {
+
+			ourTable += "<tr>";
+
+			//Now generate a column for each columnHeading for this row
+			for ( var c in columnHeadings ) {
+
+				var val = '';
+
+				//For update sets we take them direct from our input object
+				if ( recordTypeText == 'Update Set' ) {
+
+					//Apply them to the table
+					ourTable += "<td style='padding:3px; border:1px solid black;border-collapse:collapse;font-size:10pt;font-family:Arial,sans-serif;color: #706f6f;white-space:normal;word-break:break-all;display:block;'>" + typeUpdates[ t ][ columnHeadings[ c ]] + "</td>";
+
+
+				} else if ( recordTypeText == 'Excluded' && typeUpdates[ t ].file_name.length > 0 ) {
+
+					if ( typeUpdates[ t ][ columnHeadings[ c ] ] == undefined ) {
+
+						val = '';
+
+					} else {
+
+						val = typeUpdates[ t ][ columnHeadings[ c ] ];
+
+					}
+
+					//Apply them to the table
+					ourTable += "<td style='padding:3px; border:1px solid black;border-collapse:collapse;font-size:10pt;font-family:Arial,sans-serif;color: #706f6f;white-space:normal;word-break:break-all;display:block;'>" + val + "</td>";
+
+
+				} else {
+
+					//Parse the XML and setup the relevant properties based on the column headers for this object type
+					var recordPayload = typeUpdates[ t ].payload;
+					var xmlDoc = new XMLDocument2();
+					xmlDoc.parseXML( recordPayload );
+
+					//Set the name of the column we want to retrieve from the XML
+					var nodeName = '//' + columnHeadings[ c ].toString();
+
+					//Get the node with that name
+					var node = xmlDoc.getNode( nodeName );
+					//If it has a display value attribute - use that
+					val = node.getAttribute( 'display_value' );
+					//If there is no display value attribute - user the literal node element text
+					if ( !val ) {
+
+						val = xmlDoc.getNodeText( nodeName  );
+
+					}
+
+					if ( val == 'null' || val == undefined ) {
+						val = '';
+					}
+
+					//Add the new property to our object
+					typeUpdates[ t ][ columnHeadings[ c ] ] = val;
+
+					//Apply them to the table
+					ourTable += "<td style='padding:3px; border:1px solid black;border-collapse:collapse;'>" + this.escapeHtml( typeUpdates[ t ][ columnHeadings[ c ]] ) + "</td>";
+
+				}
+
+			}
+
+			//Close off the row
+			ourTable += "</tr>";
+
+		}
+
+		//We've done all of our rows - close off the table
+		ourTable += 
+			"</table>" +
+			"<div>";
+
+		//gs.info( gs.getMessage( "Generated table for record type. \nRecord type:{0},\nTable:{1}", [ recordTypeText, ourTable ] ) );
+
+		return ourTable;
+
+	},
+
+	/*_________________________________________________________________
+   * Description: Finds column headings for a specific record type
+   * Parameters: recordTypeText - [ string ] - The record type we need to locate the headings for
+   * Returns: grColHdrs - [ object ] - Gliderecord object detailing the columns to be used for the specified record type
+   ________________________________________________________________*/
+	getColumnHeadings: function( recordTypeText ) {
+
+		//gs.info( "getColumnHeadings is getting column headings for: " + recordTypeText );
+
+		var grColHdrs = new GlideRecord( this.TTD_COL_HEADERS_TABLE );
+		grColHdrs.addQuery( 'type', recordTypeText );
+		grColHdrs.query();
+		if ( !grColHdrs.hasNext() ) {
+
+			var msg = gs.getMessage( 'Unable to locate column headers for record type: {0}', [ recordTypeText ] );
+			//gs.info( msg );
+			return msg;
+
+		}
+
+		while( grColHdrs.next() ) {
+			//gs.info( "getColumnHeadings has found columns for: " + recordTypeText + " columns are: " + JSON.stringify( grColHdrs.columns ) );
+			return grColHdrs;
+		}
+
+	},
+
+
+	/*_________________________________________________________________
+   * Description: Returns a count for how many updates we have for a specific record type
+   * Parameters: recordTypeText - [ string ] - The Customer Update record type
+   * Returns: newArr - [ array ] - All matching rows for a record type
+   ________________________________________________________________*/
+	getUpdatesByType: function( recordTypeText ) {
+
+		//gs.info( "getUpdatesByType getting all customer updates for type " + recordTypeText );
+		var newArr = [];
+
+		//If it's update sets we handle those differently
+		if ( recordTypeText == 'Update Set' ) {
+
+			//gs.info( "getUpdatesByType type is: " + recordTypeText + " so returning object update sets: " + this.super_obj.updateSets );
+			return this.super_obj.updateSets;
+
+		}
+		
+		//If it's update sets we handle those differently
+		if ( recordTypeText == 'Excluded' ) {
+
+			return this.super_obj.updateSets.filter(function(set) {
+				return set.file_name;
+			});
+
+		}
+
+		//For everything else there's mastercard...I mean another object
+		for ( var m = 0; m < this.super_obj.customerUpdates.length; m++ ) {
+
+			if ( this.super_obj.customerUpdates[ m ].type == recordTypeText ) {
+				newArr.push( this.super_obj.customerUpdates[ m ] );
+			}
+		}
+
+		//gs.info( "getUpdatesByType getting all customer updates for type " + recordTypeText + " here's our tasty new array: " + newArr.toString() );
+		return newArr;
+
+	},
+
+
+	/*_________________________________________________________________
+   * Description: Creates a Generated Tech Doc record storing substituted HTML content
+   * Parameters: htmlContent - [ string ] - HTML content for the document
+   * Returns: Void
+   ________________________________________________________________*/
+	generateTechDocRecord: function( htmlContent ) {
+
+		//gs.info( "generateTechDocRecord generating a new tech doc record for htmlContent: \n" + htmlContent );
+
+		var grGenRecord = new GlideRecord( this.TTD_GEN_RECORD_TABLE );
+		grGenRecord.initialize();
+		grGenRecord.document_name = 'Technical Handover Document - ' + gs.getUserDisplayName() + ' ' + new GlideDateTime();
+		grGenRecord.template_used = this.TTD_TEMPLATE_REC_SYS_ID;
+		grGenRecord.generated_by = gs.getUserID();
+		grGenRecord.html = htmlContent;
+		grGenRecord.generation_start = this.start_time;
+		this.end_time = new GlideDateTime();
+		grGenRecord.generation_end = this.end_time;
+		var gdDiff = new GlideDuration( this.end_time.getNumericValue() - this.start_time.getNumericValue() );
+		grGenRecord.generation_time = gdDiff;
+		grGenRecord.insert();
+
+		//gs.info( "generateTechDocRecord generated a new tech doc record: " + grGenRecord.sys_id );
+
+		this.generated_tech_doc_record = grGenRecord;
+
+	},
+
+
+	/*_________________________________________________________________
+   * Description: Escapes values that might contain HTML characters
+   * Parameters: unsafe - [ string ] - A value that might contain HTML characters
+   * Returns: unsafe - [ string ] - A cleansed string
+   ________________________________________________________________*/
+	escapeHtml: function( unsafe ) {
+
+		if ( !unsafe ) {
+
+			return unsafe;
+
+		}
+
+		return unsafe
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#039;");
+
+	},
+
+
+	type: 'TuTeamTechDocs2'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-11 18:28:41</sys_created_on>
+        <sys_id>96c9637d4fd26300dc5a417da310c7e6</sys_id>
+        <sys_mod_count>7</sys_mod_count>
+        <sys_name>TuTeamTechDocs2</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sys_script_include_96c9637d4fd26300dc5a417da310c7e6</sys_update_name>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-13 12:54:12</sys_updated_on>
+    </sys_script_include>
+</record_update>

@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function( $scope, ttdService, spUtil ) {
+
+	var c = this;
+	
+	//Initialize as empty
+	ttdService.data.hasSearched = false;
+	ttdService.data.updateSets = [];
+	ttdService.data.customerUpdates = [];
+	ttdService.data.updateSetsChecked = {};
+	ttdService.data.activeCols = [];
+	ttdService.data.uniqueTypes = {};
+
+	c.data.searchText = "";
+	c.data.searchQueryText = "";
+	$scope.searching = false;
+	ttdService.setActiveCols( c.data.activeCols );
+	
+	// Set up record watch so that user can go off and update columns if they see they arent done
+	spUtil.recordWatch($scope, "x_38339_ttd_tech_doc_column", "columns!=''", function() {
+		c.server.get({
+			action: 'updateCols'
+		}).then(function( response ) {
+			ttdService.setActiveCols( response.data.activeCols );
+		});
+	});
+
+	$scope.searchFreeText = function() {
+		_cleanService();
+		$scope.searching = true;
+		c.server.get({
+			action: 'searchString',
+			searchText: c.data.searchText
+		}).then(updateService);
+	}
+
+	$scope.searchQuery = function() {
+		_cleanService();
+		$scope.searching = true;
+		c.server.get({
+			action: 'searchQuery',
+			searchText: c.data.searchQueryText
+		}).then(updateService);
+	}
+
+	function updateService( response ) {
+		$scope.searching = false;
+		// This controls if the results table displays - we want to hide it until the first search
+		$scope.displayTabbed( 'block' );
+		ttdService.setHasSearched( true );
+		ttdService.setUpdateSets( response.data.updateSets );
+		ttdService.setCustomerUpdates( response.data.customerUpdates );
+	}
+	
+	function _cleanService() {
+		$scope.displayTabbed( 'none' );
+		ttdService.setHasSearched( false );
+		ttdService.setUpdateSets([]);
+		ttdService.setCustomerUpdates([]);
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.input-group-addon.searchbox{ &#13;
+  background-color: $brand-primary;&#13;
+  color: #fff;&#13;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>Search bar that kicks off the update set and customer updates retrieval, contains most of the calculations and queries for the rest of the page</description>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>ttd-search</id>
+        <internal>false</internal>
+        <link><![CDATA[function( scope ) {
+
+	var $timeout = $injector.get("$timeout");
+
+	// Control the tabbed widget display on load
+	scope.displayTabbed = function( display ) {
+		$timeout(function(){
+			$('#xeb04242e4f522300dc5a417da310c742').css('display', display); // I apologise for this
+		}, 0);
+	}
+	
+	scope.displayTabbed( 'none' );
+
+}]]></link>
+        <name>TTD Search</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+
+	if( input && (input.action == 'searchString' || input.action == 'searchQuery') ) {
+		// retrieve new list of update sets from a text input and related customer updates
+		data.updateSets = _getUpdateSetData();
+		data.customerUpdates = _getCustomerUpdates();
+		return;
+	} else if ( !input || input.action == 'updateCols' ){
+		// Get list of Update Types that have display columns set up
+		var grColFields = new GlideRecord( 'x_38339_ttd_tech_doc_column' );
+		grColFields.addQuery( "columns!=''" );
+		grColFields.query();
+
+		var activeCols = [];
+
+		while ( grColFields.next() ) {
+			activeCols.push( grColFields.getDisplayValue() );
+		}
+
+		data.activeCols = activeCols;
+	}
+
+})();
+
+
+
+
+// Using a search term, query the Update Set table for matching sets
+function _getUpdateSetData() {
+	var updateSets = [];
+
+	var query = input.action == 'searchString' ? 'nameLIKE' + input.searchText : input.searchText;
+
+	var grUpdSet = new GlideRecord( 'sys_update_set' );
+	grUpdSet.addQuery( query );
+	grUpdSet.orderBy('name');
+	grUpdSet.query();
+
+	while( grUpdSet.next() ) {
+		
+		var newObj = {};
+		$sp.getRecordDisplayValues( newObj, grUpdSet, gs.getProperty( 'x_38339_ttd.update_sets_found.column_heading_fields' ));
+		newObj.sys_id = grUpdSet.sys_id.toString();
+		newObj.description = grUpdSet.description.toString();
+		newObj.file_name = _hasAttachments( grUpdSet.getUniqueValue() ) ? _getAttachments( grUpdSet.getUniqueValue() ) : "";
+		updateSets.push( newObj );
+	}
+
+	return updateSets;
+}
+
+// Given a glideRecord sys ID, check if there are any attachments
+function _hasAttachments ( grSysID ) {
+	var gaAtch = new GlideAggregate( 'sys_attachment' );
+	gaAtch.addAggregate( 'COUNT' );
+	gaAtch.addQuery( 'table_sys_id', grSysID );
+	gaAtch.query();
+	
+	if ( gaAtch.next() && gaAtch.getAggregate( 'COUNT' ) > 0 ) {
+		return true;
+	}
+	return false;
+}
+
+function _getAttachments ( grSysID ) {
+	var grAtch = new GlideRecord( 'sys_attachment' );
+	grAtch.addQuery( 'table_sys_id', grSysID );
+	grAtch.query();
+	
+	var atchArr = [];
+	
+	while ( grAtch.next() ) {
+		atchArr.push( grAtch.file_name.toString() );
+	}
+	return atchArr.join('<br/>');
+}
+
+// Given the Update Set records returned from _getUpdateSetData(), get all related customer updates
+function _getCustomerUpdates() {
+	if ( data.updateSets.length >= 1 ) {
+		var customerUpdates = [];		
+
+		// Get a list of all found update set sys IDs
+		var updateSetMap = data.updateSets.map(function( uSet ) {
+			return uSet.sys_id;
+		});
+
+		// Query requires customer updates for all Update Sets found
+		var grCustUpd = new GlideRecord( 'sys_update_xml' );
+		grCustUpd.orderBy('type');
+		grCustUpd.orderBy('target_name');
+		var q = grCustUpd.addQuery( 'update_set', updateSetMap[0] );
+		for ( var i = 1; i < updateSetMap.length; i++ ) {
+			q.addOrCondition( 'update_set', updateSetMap[i] );
+		}
+		grCustUpd.addQuery('type!=Images');// Image payloads are huge and never used
+		grCustUpd.addQuery('action!=DELETE');// Deletes are not added to Tech Docs
+		grCustUpd.query();
+
+		while ( grCustUpd.next() ) {
+			var newObj = {};
+			$sp.getRecordDisplayValues( newObj, grCustUpd, 'target_name,sys_updated_by,type,update_set,action,sys_id,payload' );
+			newObj.update_set_sys_id = grCustUpd.update_set.toString();
+			customerUpdates.push( newObj );
+		}
+
+		return customerUpdates;
+	}
+	return [];
+}]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-13 11:42:57</sys_created_on>
+        <sys_id>51ff502a4f522300dc5a417da310c78a</sys_id>
+        <sys_mod_count>13</sys_mod_count>
+        <sys_name>TTD Search</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sp_widget_51ff502a4f522300dc5a417da310c78a</sys_update_name>
+        <sys_updated_by>admin_mh</sys_updated_by>
+        <sys_updated_on>2018-12-18 14:22:30</sys_updated_on>
+        <template><![CDATA[<div class="panel">
+  <div class="panel-heading" ng-if="::data.panelTitle">
+    <h1 class="panel-title">{{::data.panelTitle}}</h1>
+  </div>
+  <div class="panel-body">
+
+    <form>
+      <uib-tabset active="active">
+        <uib-tab index="0" heading="Free text" disable="searching">
+          <div class="form_bg form-group" id="search-form-freetext">
+            <div class="tsearch-input-group">
+              <label for="ttd-search-term">${Add a search term contained in the update set name}</label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="ttd-search-term" id="ttd-search-term" placeholder="${Search...}"
+                       ng-model="data.searchText"
+                       ng-keyup="$event.keyCode == 13 && data.searchText && searchFreeText()"
+                       ng-disabled="searching">
+                <span ng-click="data.searchText && searchFreeText()" class="input-group-addon searchbox"><span class="glyphicon glyphicon-search"></span></span>
+              </div>
+            </div>
+          </div>
+        </uib-tab>
+
+        <uib-tab index="0" heading="Query" disable="searching">
+          <div class="form_bg form-group" id="search-form-query">
+            <div class="tsearch-input-group">
+              <label for="ttd-search-query">${Copy a query into the search bar to find all relevant update sets}</label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="ttd-search-query" id="ttd-search-query" placeholder="${Query...}"
+                       ng-model="data.searchQueryText"
+                       ng-keyup="$event.keyCode == 13 && data.searchQueryText && searchQuery()"
+                       ng-disabled="searching">
+                <span ng-click="data.searchQueryText && searchQuery()" class="input-group-addon searchbox"><span class="glyphicon glyphicon-search"></span></span>
+              </div>
+            </div>
+          </div>
+        </uib-tab>
+      </uib-tabset>
+    </form>
+
+  </div>
+</div>
+
+<div class="panel" style="text-align:center"
+     ng-if="searching">
+  <img src="/loading-wedges.gif">
+</div>]]></template>
+    </sp_widget>
+</record_update>

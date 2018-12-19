@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function() {
+  /* widget controller */
+  var c = this;
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.ttd-intro-text {&#13;
+  color: #fff;&#13;
+  text-align: center;&#13;
+  //background-color: #0095D5;&#13;
+  // border: 1px solid black;&#13;
+  padding-top: 10px;&#13;
+  padding-bottom: 10px;&#13;
+  position: relative;&#13;
+  width:auto;&#13;
+  padding: 15px 25px;&#13;
+  margin-top: 10px;&#13;
+  margin-bottom: 10px;&#13;
+  border-radius: 5px;&#13;
+  font-size: 18px&#13;
+}&#13;
+&#13;
+.ttd-title{&#13;
+  margin: 0 auto 15px;&#13;
+  padding: 0;&#13;
+  font-weight: bold;&#13;
+}&#13;
+&#13;
+.ttd-desc{&#13;
+  padding: 0;&#13;
+}&#13;
+&#13;
+.ttd-desc p:last-child{&#13;
+  margin-bottom: 0;&#13;
+}&#13;
+&#13;
+div &gt; span &gt; p i {&#13;
+  display: block;&#13;
+}&#13;
+&#13;
+a {&#13;
+  color: #fff;&#13;
+  margin-right: 10px;&#13;
+&#13;
+  &amp;:hover {&#13;
+    //color: #C0C0C0&#13;
+  }&#13;
+}&#13;
+&#13;
+.team-member {&#13;
+ margin-right: 5px; &#13;
+}&#13;
+&#13;
+label {&#13;
+  &amp;:hover {&#13;
+    transform: scale(1.2); &#13;
+  }&#13;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>Introductory text to TeamTechDocs</description>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>ttd-intro-text</id>
+        <internal>false</internal>
+        <link/>
+        <name>TTD Intro Text</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-13 11:37:35</sys_created_on>
+        <sys_id>b6de54e64f522300dc5a417da310c7b1</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>TTD Intro Text</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sp_widget_b6de54e64f522300dc5a417da310c7b1</sys_update_name>
+        <sys_updated_by>admin_mh</sys_updated_by>
+        <sys_updated_on>2018-12-18 10:54:50</sys_updated_on>
+        <template><![CDATA[<div class="ttd-intro-text">
+  <h1 class="ttd-title">TeamTechDocs</h1>
+  <div class="ttd-desc">
+    <p>Welcome to TeamTechDocs!</p>
+    <p>This utility allows you to rapidly generate a Technical Handover document.</p>
+    <p>Enter a search term and search. Once the update sets are located review them and select the update types you wish to store in the document.</p>
+    <p>If you have any suggestions on how to improve this app please email one of the team: </p>
+    <span class="team-member">
+      <label for="team-member-1">
+        <i class="far fa-envelope-open"></i>
+        <a id="team-member-1" href="mailto:michael.herron@teamultra.net?Subject=TeamSearch" target="_top">Michael Herron</a>
+      </label>
+    </span>
+    <span class="team-member">
+      <label for="team-member-2">
+        <i class="far fa-envelope-open"></i>
+        <a id="team-member-2" href="mailto:tom.cumins@teamultra.net?Subject=TeamSearch" target="_top">Tom Cumins</a>
+      </label>
+    </span>
+  </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>

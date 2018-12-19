@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>The column heading names that will be displayed in the update sets selected widget</description>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_38339_ttd.update_sets_selected.column_headings</name>
+        <read_roles/>
+        <suffix>update_sets_selected.column_headings</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-11 18:32:41</sys_created_on>
+        <sys_id>27ca23bd4fd26300dc5a417da310c702</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>x_38339_ttd.update_sets_selected.column_headings</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sys_properties_27ca23bd4fd26300dc5a417da310c702</sys_update_name>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-13 12:41:54</sys_updated_on>
+        <type>string</type>
+        <value>Name,Type,Update&amp;nbsp;Set,Updated&amp;nbsp;By</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=27ca23bd4fd26300dc5a417da310c702"/>
+</record_update>

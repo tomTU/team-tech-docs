@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function( $scope, $uibModal, $sanitize, ttdService ) {
+  /* widget controller */
+  var c = this;
+	
+	$scope.ttdService = ttdService;
+	
+	/* Preview Modal control */
+	// Function called to open Modal preview window
+	// Open the modal with a loading image and all a server action to build the preview
+	$scope.openPreview = function() {
+		$scope.preview = "";
+		var impersonateModal = $uibModal.open({
+			animation: true,
+			ariaLabelledBy: 'modal-title',
+			ariaDescribedBy: 'modal-body',
+			template: "<div ng-include=\"'ttd-preview-modal-2.html'\"></div>",
+			controller: openPreviewController,
+			scope: $scope,
+			size: 'lg'
+		});
+		c.server.get({
+			action: 'preview',
+			service: ttdService
+		}).then(function( response ) {
+			$scope.preview = response.data.preview;
+		});
+	};
+
+	// Controller for Modal preview window
+	var openPreviewController = function( $uibModalInstance ) {
+
+		$scope.cancel = function () {
+			$scope.preview = "";
+			$uibModalInstance.dismiss( 'cancel' );
+		};
+
+	};
+	/* End of Preview Modal control */
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.btn3d {&#13;
+  position:relative;&#13;
+  top: -6px;&#13;
+  border:0;&#13;
+  transition: all 40ms linear;&#13;
+  margin-top:10px;&#13;
+  margin-bottom:10px;&#13;
+  margin-left:2px;&#13;
+  margin-right:2px;&#13;
+}&#13;
+&#13;
+.btn3d:active:focus,&#13;
+.btn3d:focus:hover,&#13;
+.btn3d:focus {&#13;
+  -moz-outline-style:none;&#13;
+  outline:medium none;&#13;
+}&#13;
+&#13;
+.btn3d:active, .btn3d.active {&#13;
+  top:2px;&#13;
+}&#13;
+&#13;
+.btn3d.btn-primary {&#13;
+  box-shadow:0 0 0 1px #417fbd inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #4D5BBE, 0 8px 8px 1px rgba(0,0,0,0.5);&#13;
+  background-color:#4274D7;&#13;
+}&#13;
+&#13;
+.btn3d.btn-primary:active, .btn3d.btn-primary.active {&#13;
+  box-shadow:0 0 0 1px #417fbd inset, 0 0 0 1px rgba(255,255,255,0.15) inset, 0 1px 3px 1px rgba(0,0,0,0.3);&#13;
+  background-color:#4274D7;&#13;
+}&#13;
+&#13;
+.btn3d.btn-success {&#13;
+  box-shadow:0 0 0 1px #31c300 inset, 0 0 0 2px rgba(255,255,255,0.15) inset, 0 8px 0 0 #5eb924, 0 8px 8px 1px rgba(0,0,0,0.5);&#13;
+  background-color:#78d739;&#13;
+}&#13;
+.btn3d.btn-success:active, .btn3d.btn-success.active {&#13;
+  box-shadow:0 0 0 1px #30cd00 inset, 0 0 0 1px rgba(255,255,255,0.15) inset, 0 1px 3px 1px rgba(0,0,0,0.3);&#13;
+  background-color: #78d739;&#13;
+}&#13;
+&#13;
+/* Modal CSS */&#13;
+.loading-preview {&#13;
+  display: flex;&#13;
+  justify-content: center;&#13;
+  align-items: center;&#13;
+  height: 100%; &#13;
+}&#13;
+/* End of Modal CSS */</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>Preview button that displays a modal with an html preview of the document</description>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>ttd-preview-2</id>
+        <internal>false</internal>
+        <link/>
+        <name>TTD Preview</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+
+	if ( input && input.action == 'preview' ) {
+		// Re calculate Service Objects to only contain required data
+		var previewData = _calcPreviewData( input.service.data );
+
+		var previewBuilder = new TuTeamTechDocs2();
+		var grPreview = previewBuilder.ttdController( previewData );
+
+		if ( grPreview && grPreview.isValid() ) {
+			data.preview = grPreview.html.toString();
+		} else {
+			data.preview = '<p class="alert alert-danger">' + grPreview + '</p>'
+		}
+	}
+
+})();
+
+// Take the Service along with all it's data and filter Update Sets and Customer Updates
+function _calcPreviewData ( serviceData ) {
+	var newUpdateSets = [];
+	var newCustomerUpdates = [];
+
+	newUpdateSets = serviceData.updateSets.filter(function( updateSet ) {
+		return serviceData.updateSetsChecked[ updateSet.sys_id ];
+	});
+
+	newCustomerUpdates = serviceData.customerUpdates.filter( function( updates ) {
+		return serviceData.uniqueTypes[ updates.type ] && serviceData.updateSetsChecked[ updates.update_set_sys_id ];
+	});
+
+	var previewData = {
+		"updateSets": newUpdateSets,
+		"customerUpdates": newCustomerUpdates,
+		"uniqueTypes": serviceData.uniqueTypes
+	};
+
+	return previewData;
+
+}]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-13 11:39:51</sys_created_on>
+        <sys_id>ac4fd4e64f522300dc5a417da310c7ef</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>TTD Preview</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sp_widget_ac4fd4e64f522300dc5a417da310c7ef</sys_update_name>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-13 13:14:18</sys_updated_on>
+        <template><![CDATA[<div class="text-center"
+     ng-show="ttdService.data.hasSearched && ttdService.data.updateSets.length > 0">
+  <button type="button" class="btn btn-primary btn-lg btn3d" ng-click="openPreview()"><span class="glyphicon glyphicon-search"></span> Preview</button>
+</div>]]></template>
+    </sp_widget>
+</record_update>

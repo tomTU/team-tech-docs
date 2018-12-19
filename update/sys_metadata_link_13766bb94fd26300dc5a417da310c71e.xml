@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>update</directory>
+        <documentkey>a494b3fb4fc22300dc5a417da310c73c</documentkey>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="x_38339_ttd_tech_doc_column">
+    <x_38339_ttd_tech_doc_column action="INSERT_OR_UPDATE">
+        <columns>{"Name":"sys_name","Form":"view","Description":"description"}</columns>
+        <sys_created_by>admin_mh</sys_created_by>
+        <sys_created_on>2018-12-05 14:09:16</sys_created_on>
+        <sys_id>a494b3fb4fc22300dc5a417da310c73c</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_updated_by>admin_mh</sys_updated_by>
+        <sys_updated_on>2018-12-05 14:09:43</sys_updated_on>
+        <type>Related Lists</type>
+    </x_38339_ttd_tech_doc_column>
+</record_update>
+]]></payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-11 18:13:49</sys_created_on>
+        <sys_id>13766bb94fd26300dc5a417da310c71e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Created 05/12/2018 14:09:16</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sys_metadata_link_13766bb94fd26300dc5a417da310c71e</sys_update_name>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-11 18:13:49</sys_updated_on>
+        <tablename>x_38339_ttd_tech_doc_column</tablename>
+    </sys_metadata_link>
+</record_update>

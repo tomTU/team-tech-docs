@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_angular_provider">
+    <sp_angular_provider action="INSERT_OR_UPDATE">
+        <name>ttdService</name>
+        <script><![CDATA[function teamTechDocs() {
+
+	var data = this.data = {
+		"hasSearched": false,
+		"updateSets": [],
+		"customerUpdates": [],
+		"updateSetsChecked": {},
+		"activeCols": [],
+		"uniqueTypes": {}
+	};
+
+	/*
+	*  ----   Setter functions   -----
+	*/
+	this.setHasSearched = function( bool ) {
+		data.hasSearched = bool;
+	};
+
+	this.setUpdateSets = function( updateSets ) {
+		data.updateSets = updateSets;
+		updateSets.forEach(function( updateSet ) {
+			data.updateSetsChecked[ updateSet.sys_id ] = updateSet.state == 'Complete';
+		});
+		console.log("setUpdateSets()");
+		console.log(data.updateSets);
+		console.log(data.updateSetsChecked);
+	};
+
+	// Set customerUpdates equal to the incoming customer updates array, then loop through to get unique types to display
+	this.setCustomerUpdates = function( customerUpdates ) {
+		data.customerUpdates = customerUpdates;
+		this.calcUniquetypes();
+		console.log("setCustomerUpdates()");
+		console.log(data.customerUpdates);
+	};
+
+	this.generateDownload = function( html ) {
+		// Create blob
+		var blob = new Blob(['\ufeff', html], {
+			type: 'application/msword'
+		});
+		// Specify link url
+		var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+		// Specify file name
+		var filename = 'Tech-Docs.doc';
+		// Create download link element
+		var downloadLink = document.createElement("a");
+
+		document.body.appendChild(downloadLink);
+
+		if(navigator.msSaveOrOpenBlob ){
+			navigator.msSaveOrOpenBlob( blob, filename );
+		} else {
+			// Create a link to the file
+			downloadLink.href = url;
+			// Setting the file name
+			downloadLink.download = filename;
+			//triggering the function
+			downloadLink.click();
+		}
+	};
+
+	this.setActiveCols = function( activeCols ) {
+		data.activeCols = activeCols;
+		console.log("data.activeCols()");
+		console.log(data.activeCols);
+	};
+
+	// Loop over customer update, where the related update set is 'checked', 
+	// add the type to an object if it doesnt already exist
+	this.calcUniquetypes = function() {
+		var uniqueTypes = {};
+		data.customerUpdates.forEach(function( customerUpdate ) {
+			var checked = data.updateSetsChecked[ customerUpdate.update_set_sys_id ];
+			// Check for type
+			if ( checked && !uniqueTypes[ customerUpdate.type ] ) {
+				var valueExists = data.uniqueTypes.hasOwnProperty( customerUpdate.type );
+				var newValue = data.activeCols.indexOf( customerUpdate.type ) != -1;
+				uniqueTypes[ customerUpdate.type ] = valueExists ? data.uniqueTypes[ customerUpdate.type ] : newValue;
+			}
+		});
+		data.uniqueTypes = uniqueTypes;
+		console.log("calcUniquetypes()");
+		console.log(data.uniqueTypes);
+	};
+
+	this.customerUpdatesFilter = function( customerUpdate ) {
+		return data.uniqueTypes[ customerUpdate.type ] && data.updateSetsChecked[ customerUpdate.update_set_sys_id ];
+	};
+
+	this.updateSetsFilter = function( updateSet ) {
+		return data.updateSetsChecked[ updateSet.sys_id ];
+	};
+
+}]]></script>
+        <sys_class_name>sp_angular_provider</sys_class_name>
+        <sys_created_by>admin_tc</sys_created_by>
+        <sys_created_on>2018-12-13 11:28:32</sys_created_on>
+        <sys_id>f7dc90a64f522300dc5a417da310c701</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>ttdService</sys_name>
+        <sys_package display_value="TeamTechDocs" source="x_38339_ttd">bf7e9f314fd26300dc5a417da310c7a2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TeamTechDocs">bf7e9f314fd26300dc5a417da310c7a2</sys_scope>
+        <sys_update_name>sp_angular_provider_f7dc90a64f522300dc5a417da310c701</sys_update_name>
+        <sys_updated_by>admin_tc</sys_updated_by>
+        <sys_updated_on>2018-12-13 13:17:32</sys_updated_on>
+        <type>service</type>
+    </sp_angular_provider>
+</record_update>

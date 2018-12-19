@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Tech Doc Column" max_length="40" name="x_38339_ttd_tech_doc_column" type="collection">
+        <element label="Columns" max_length="4000" name="columns" type="simple_name_values"/>
+        <element display="true" label="Type" max_length="40" name="type" type="string"/>
+    </element>
+</database>
